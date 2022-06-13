@@ -1,0 +1,80 @@
+Q1)Configure smtp in localhost.
+
+	rmp -qa | grep sendmail
+	rep -qa | grep postfix
+	vim /etc/mail/sendmail.mc 
+			dnl DAEMON_OPTIONS
+	vim /etc/mail/local-host-names
+			ptripathy
+	systemctl start sendmail
+	systemctl enable sendmail
+	mail -v -s "Test Mail" username@hostname
+			Hello this is test mail.
+			.
+			EOT
+	su - ptripathy
+	mail
+	
+
+Q2)Create a user in your localhost, which should not be able to execute the sudo command.
+
+	useradd thor              (Created a new user)
+	su - thor                 (Switch User)
+	sudo -l                   (To check is the user has sudo access)
+	usermod -G wheel username (To grant sudo access)
+	gpasswd -d username wheel (To remove user sudo access)
+
+Q3)Configure your system in such a way that when a user type and executes a describe command
+ from anywhere of the system it must list all the files and folders of the user's 
+current directory.
+	
+	nano ~/.bashrc
+	alias describe='ls;'
+
+Q4)Users can put a compressed file at any path of the linux file system. The name of the file will be research and the extension will be of compression type, example for gzip type extension will be .gz.
+You have to find the file and check the compression type and uncompress it. 
+
+	#!/bin/bash
+	f = `find / -name "research*"`
+	if grep -q "$gz" <<< "$f"; then
+		echo "Found the file at $f"
+		echo "Unzipping the file"
+		gzip -d $f
+		echo "File unzipped"
+	else
+		echo "Zip file not found"
+	fi   
+           
+
+Q5)Configure your system in such a way that any user of your system creates a file then
+there should not be permission to do any activity in that file.
+Note:- Don’t use the chmod command.
+	
+	umask (to check the value)
+	o/p-->0002
+	umask 0777 (to change the value)
+
+Q6)Create a service with the name showtime , after starting the service, 
+every minute it should print the current time in a file in the user home directory.
+
+.sh file----->
+
+	
+	#!/bin/bash
+	while true
+	do
+		date >> /home/ptripathy/time-log
+		sleep 60
+	done
+
+
+.service file----->
+
+
+	[Service]
+	[ExecStart=/home/ptripathy/showtime.sh
+             
+
+	
+	
+	
