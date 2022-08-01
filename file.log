@@ -1,0 +1,19 @@
+Wrong input value for count: '0000'
+Wrong input value for count: '0000'
+Wrong input value for count: '0000'
+Line not found in Conf file.
+Line not found in Conf file.
+Line not found in Conf file.
+Line not found in Conf file.
+Line not found in Conf file.
+Wrong input value for Auction/Bid: 'AUCTIO'
+Wrong input value for Auction/Bid: 'AUCTIO'
+Wrong input value for count: '2222'  Time: '2022-07-30 02:36:09' 
+Wrong input value for count: '2222'  Time: '2022-07-30 22:31:08' 
+Wrong input value for count: '2222'  Time: '2022-07-30 22:32:21' 
+Wrong input value for scale: 'LO' Time: '2022-07-30 22:36:00'
+Wrong input value for Auction/Bid: 'AUCTIO' Time: '2022-07-30 22:37:41'
+Wrong input value for component: 'INGESTORi' Time: '2022-07-30 22:39:23'
+Time: '2022-08-01 16:33:52 ' Wrong input value for Auction/Bid: 'Auction'
+Time: '2022-08-01 16:43:16' Component: 'INGESTOR' for 'vdopiasample-bid' not found in conf file. 
+Time: '2022-08-01 16:52:22' Component: 'INGESTOR' for 'BID' not found in conf file. 
