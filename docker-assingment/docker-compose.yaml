@@ -1,0 +1,78 @@
+version: '3.2'
+
+services:
+  elasticsearch:
+    build:
+      context: elasticsearch/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    
+    volumes:
+      - type: bind
+        source: ./elasticsearch/config/elasticsearch.yml
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+        read_only: true
+      - type: volume
+        source: elasticsearch
+        target: /usr/share/elasticsearch/data
+    ports:
+      -  "9200:9200"
+     
+    environment:
+      ELASTIC_USER: elastic
+      ELASTIC_PASSWORD: changeme
+    networks:
+      - elk
+ 
+ 
+        
+  kibana:
+    build:
+      context: kibana/
+      args:
+        ELK_VERSION: $ELK_VERSION
+    volumes:
+      - type: bind
+        source: ./kibana/config/kibana.yml
+        target: /usr/share/kibana/config/kibana.yml
+        read_only: true
+    ports:
+      - "5601:5601"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+      
+  nginx:
+    build: ./nginx
+    volumes:
+     
+      - ./nginx/log:/var/log/nginx
+    ports:
+      - "80:80"
+  
+    networks:
+      - elk
+   
+  
+  filebeat:
+    build: ./filebeat
+    entrypoint: "filebeat -e -strict.perms=false"
+    volumes:
+      - ./filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - ./nginx/log:/var/log/nginx
+    networks:
+      - elk
+    depends_on: 
+      - nginx
+      - elasticsearch
+      - kibana
+      
+    
+
+networks:
+  elk:
+    driver: bridge
+
+volumes:
+  elasticsearch:
