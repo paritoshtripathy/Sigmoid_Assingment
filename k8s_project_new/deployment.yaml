@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp-service
+  labels:
+    app: webapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+       app: webapp
+  template:
+    metadata:
+      name: webapp-service
+      labels:
+        app: webapp
+    spec:
+      containers:
+        - name: webapp-service
+          image: paritoshtripathy22/k8s_new:1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+           - containerPort: 8080
