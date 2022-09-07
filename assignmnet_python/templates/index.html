@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+{% block title %}S3 Bucket List{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="col-12-xs">
+      <form class="select-bucket" action="{{ url_for('create') }}" method="post">
+        <input type="text" name="text" value="">
+        <button type="submit" class="btn btn-primary btn-sm">
+          <i class="fa fa-archive"></i>
+          Create
+        </button>
+      </form>
+      <h3>Bucket List</h3>
+      
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <p class="bg-info" style="padding: 15px;">
+          {% for message in messages %}
+            {{ message }}<br>
+          {% endfor %}
+          </p>
+        {% endif %}
+      {% endwith %}
+      <hr>
+
+      <table class="table table-striped">
+        <tr>
+          <th>Bucket Name</th>
+          <th>Created</th>
+          <th></th>
+        </tr>
+
+        {% for bucket in buckets %}
+        <tr>
+          <td>{{ bucket['Name'] }}</td>
+          <td>{{ bucket['CreationDate'] | datetimeformat }}</td>
+          <td>
+            <form class="select-bucket" action="{{ url_for('index') }}" method="post">
+              <input type="hidden" name="bucket" value="{{ bucket['Name'] }}">
+              <button type="submit" class="btn btn-primary btn-sm">
+                <i class="fa fa-archive"></i>
+                Select
+              </button>
+            </form>
+            <td class="">
+              <form class="delete-form" action="{{ url_for('delete_f') }}" method="POST">
+                <input type="hidden" name="bucket" value="{{ bucket['Name'] }}">
+                <button type="submit" class="btn btn-danger btn-sm">
+                  <i class="fa fa-trash-alt"></i>
+                </button>
+              </form>
+            </td>  
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+{% endblock %}
