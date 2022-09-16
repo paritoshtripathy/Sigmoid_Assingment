@@ -1,11 +1,28 @@
-import imp
+import time
 from flask import Flask, render_template, request, redirect, url_for, flash, \
     Response, session
 from flask_bootstrap import Bootstrap
 from filters import datetimeformat, file_type
 from resources import get_bucket, get_buckets_list
 import boto3
+import prometheus_client
+from prometheus_client.core import CollectorRegistry
+from prometheus_client.core import Summary, Counter, Histogram, Gauge
+from prometheus_flask_exporter import PrometheusMetrics
+
+
+
 app = Flask(__name__)
+
+_INF=float("inf")
+
+graphs={}
+graphs['c']= Counter('python_request_operations_total', 'The total number of processed requests')
+graphs['h']= Histogram('python_request_duration_seconds', 'Histogram for the duration in seconds', buckets=(1,2,5,6,10,_INF))
+
+metrics = PrometheusMetrics(app)
+metrics.info("app_info", "App Info, this can be anything you want", version="1.0.0")
+
 Bootstrap(app)
 app.secret_key = 'secret'
 app.jinja_env.filters['datetimeformat'] = datetimeformat
@@ -14,6 +31,13 @@ app.jinja_env.filters['file_type'] = file_type
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    # start = time.time()
+    # graphs['c'].inc()
+
+    # time.sleep(0.600)
+    # end=time.time()
+    # graphs['h'].observe(end-start)
+
     if request.method == 'POST':
         bucket = request.form['bucket']
         session['bucket'] = bucket
@@ -23,6 +47,14 @@ def index():
         return render_template("index.html", buckets=buckets)
 
 
+# @app.route('/metrics')
+# def request_counts():
+#     res=[]
+#     for k,v in graphs.items():
+#         res.append(prometheus_client.generate_latest(v))
+#     return Response(res, mimetype="text/plain")    
+
+
 @app.route('/files')
 def files():
     my_bucket = get_bucket()
@@ -30,7 +62,6 @@ def files():
     buckets = get_buckets_list()
 
     return render_template('files.html', my_bucket=my_bucket, files=summaries, buckets=buckets)
-
 
 @app.route('/upload', methods=['POST'])
 def upload():
@@ -65,12 +96,10 @@ def delete():
 
 @app.route('/delete_f', methods=['POST'])
 def delete_f():
-    bucket = request.form['bucket']
-    client = boto3.client('s3')
-    objects = client.list_objects_v2(Bucket=bucket)
-    fileCount = objects['KeyCount']
-    if fileCount == 0:
-        client.delete_bucket(Bucket=bucket)
+    bucket_name = request.form['bucket']
+    s3 = boto3.resource('s3')
+    bucket = s3.Bucket(bucket_name)
+    bucket.objects.all().delete()
     flash('Bucket deleted successfully')
     return redirect(url_for('index'))
 
