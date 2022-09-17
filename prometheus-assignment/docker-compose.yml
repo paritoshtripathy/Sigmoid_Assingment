@@ -27,4 +27,5 @@ services:
       - prometheus
     volumes:
       - ./datasource.yml:/etc/grafana/provisioning/datasource.yml
+      - ./config.ini:/etc/grafana/grafana.ini
 
